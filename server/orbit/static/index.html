@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orbit</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Login screen: paste the token that bootstrap.sh printed -->
+  <div id="login" class="login hidden">
+    <div class="card">
+      <div class="logo">◉ Orbit</div>
+      <p>Paste the token printed at the end of setup.</p>
+      <input id="tokenInput" type="password" placeholder="Token">
+      <button id="tokenSave" class="primary">Connect</button>
+      <p id="loginErr" class="err"></p>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="logo">◉ Orbit</div>
+      <button id="newChat" class="primary wide">+ New task</button>
+      <nav>
+        <button data-view="chat" class="nav active">Chats</button>
+        <button data-view="routines" class="nav">Routines</button>
+        <button data-view="approvals" class="nav">Approvals <span id="apprBadge" class="badge hidden">0</span></button>
+        <button data-view="settings" class="nav">Settings</button>
+      </nav>
+      <div id="chatList" class="chatlist"></div>
+    </aside>
+
+    <main class="main">
+      <!-- Chat view -->
+      <section id="view-chat" class="view">
+        <header class="bar">
+          <div id="chatTitle" class="title">Start a new task</div>
+          <div class="bar-right">
+            <span id="status" class="status"></span>
+            <select id="modelPick" title="Model"></select>
+            <button id="toggleComputer" class="ghost">🖥 Computer</button>
+          </div>
+        </header>
+        <div id="messages" class="messages">
+          <div class="empty">
+            <h2>What should I do?</h2>
+            <p>I have my own cloud computer with a browser, terminal and files.<br>
+               I keep working when your PC is off.</p>
+          </div>
+        </div>
+        <form id="composer" class="composer">
+          <textarea id="input" rows="2" placeholder="Describe a task… (Enter to send, Shift+Enter for a new line)"></textarea>
+          <button class="primary" type="submit">Send</button>
+        </form>
+      </section>
+
+      <!-- Routines view -->
+      <section id="view-routines" class="view hidden">
+        <header class="bar"><div class="title">Routines</div></header>
+        <div class="page">
+          <form id="routineForm" class="form">
+            <input name="name" placeholder="Name, e.g. Morning news" required>
+            <input name="cron" placeholder="Schedule (cron, UTC), e.g. 0 7 * * 1-5" required>
+            <select name="model" id="routineModel"></select>
+            <textarea name="prompt" rows="3" placeholder="What to do each time" required></textarea>
+            <button class="primary">Add routine</button>
+            <p class="hint">Cron help: <code>0 7 * * 1-5</code> = weekdays 07:00 UTC · <code>*/30 * * * *</code> = every 30 min · <code>0 18 * * 0</code> = Sundays 18:00</p>
+          </form>
+          <div id="routineList"></div>
+        </div>
+      </section>
+
+      <!-- Approvals view -->
+      <section id="view-approvals" class="view hidden">
+        <header class="bar"><div class="title">Approvals</div></header>
+        <div class="page"><div id="approvalList"></div></div>
+      </section>
+
+      <!-- Settings view -->
+      <section id="view-settings" class="view hidden">
+        <header class="bar"><div class="title">Settings</div></header>
+        <div class="page">
+          <h3>Models in the dropdown</h3>
+          <p class="hint">One per line, as <code>provider:model</code>. Claude takes aliases (<code>opus</code>, <code>sonnet</code>, <code>haiku</code>) or full names. Codex <code>default</code> uses your ChatGPT plan's default. <code>auto</code> = Claude first, Codex when Claude hits its limit.</p>
+          <textarea id="modelsText" rows="8"></textarea>
+          <button id="modelsSave" class="primary">Save models</button>
+          <h3>Connection</h3>
+          <button id="logout" class="ghost">Forget token</button>
+        </div>
+      </section>
+    </main>
+
+    <aside id="computer" class="computer hidden">
+      <header class="bar">
+        <div class="title">Cloud computer</div>
+        <div class="bar-right">
+          <a id="computerPop" class="ghost" target="_blank">Open ↗</a>
+        </div>
+      </header>
+      <iframe id="computerFrame" title="Cloud computer"></iframe>
+      <p class="hint pad">You can click and type here to take over: log in to sites, solve captchas, then tell Orbit to continue.</p>
+    </aside>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
