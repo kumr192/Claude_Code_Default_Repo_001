@@ -1,0 +1,20 @@
+{
+  "name": "orbit-desktop",
+  "version": "0.1.0",
+  "description": "Orbit desktop app (Windows and Mac). Opens your Orbit server.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg"
+  },
+  "build": {
+    "appId": "app.orbit.desktop",
+    "productName": "Orbit",
+    "files": ["main.js", "setup.html"]
+  },
+  "devDependencies": {
+    "electron": "45.3.0",
+    "electron-builder": "26.18.0"
+  }
+}
