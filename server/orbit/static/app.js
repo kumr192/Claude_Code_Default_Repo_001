@@ -1,4 +1,4 @@
-// Orbit web UI. Plain JavaScript, no build step.
+// DexClorageBot web UI. Plain JavaScript, no build step.
 // Used by the desktop app (Electron) and by any browser on your Tailscale network.
 
 const $ = (id) => document.getElementById(id);
@@ -70,7 +70,7 @@ async function loadChats() {
     d.onclick = () => openChat(c.id);
     list.appendChild(d);
     // Desktop notification when a background task finishes.
-    if (state.wasRunning[c.id] && !c.running && c.id !== state.chatId) notify("Orbit: task finished", c.title);
+    if (state.wasRunning[c.id] && !c.running && c.id !== state.chatId) notify("DexClorageBot: task finished", c.title);
     state.wasRunning[c.id] = !!c.running;
   }
 }
@@ -158,7 +158,7 @@ async function loadApprovals() {
   const badge = $("apprBadge");
   badge.textContent = items.length; badge.classList.toggle("hidden", !items.length);
   for (const a of items) {
-    if (!state.seenApprovals.has(a.id)) { state.seenApprovals.add(a.id); notify("Orbit needs your approval", `${a.tool}: ${a.detail}`); }
+    if (!state.seenApprovals.has(a.id)) { state.seenApprovals.add(a.id); notify("DexClorageBot needs your approval", `${a.tool}: ${a.detail}`); }
   }
   const list = $("approvalList");
   if ($("view-approvals").classList.contains("hidden")) return;

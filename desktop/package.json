@@ -1,7 +1,7 @@
 {
   "name": "orbit-desktop",
   "version": "0.1.0",
-  "description": "Orbit desktop app (Windows and Mac). Opens your Orbit server.",
+  "description": "DexClorageBot desktop app (Windows and Mac). Opens your DexClorageBot server.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -9,8 +9,8 @@
     "dist:mac": "electron-builder --mac dmg"
   },
   "build": {
-    "appId": "app.orbit.desktop",
-    "productName": "Orbit",
+    "appId": "app.dexcloragebot.desktop",
+    "productName": "DexClorageBot",
     "files": ["main.js", "setup.html"]
   },
   "devDependencies": {

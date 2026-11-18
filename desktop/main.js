@@ -1,4 +1,4 @@
-// Orbit desktop shell. It opens the Orbit web UI that runs on your VM.
+// DexClorageBot desktop shell. It opens the DexClorageBot web UI that runs on your VM.
 const { app, BrowserWindow, Menu, shell } = require("electron");
 const fs = require("fs");
 const path = require("path");
@@ -11,7 +11,7 @@ const writeSettings = (s) => fs.writeFileSync(settingsFile(), JSON.stringify(s, 
 let win;
 let keepAlive = null;
 
-// Free local mode: Orbit runs inside WSL on this PC. Keep WSL running while
+// Free local mode: DexClorageBot runs inside WSL on this PC. Keep WSL running while
 // the app is open (WSL stops a distro when nothing uses it).
 function startWsl() {
   const { serverUrl, wslDistro = "Ubuntu-24.04" } = readSettings();
@@ -25,12 +25,12 @@ async function openServer(url, tries = 20) {
   for (let i = 0; i < tries; i++) {
     try { await win.loadURL(url); return; } catch { await new Promise((r) => setTimeout(r, 2000)); }
   }
-  win.loadFile("setup.html", { query: { error: `Cannot reach ${url}. Is Orbit running? (local: open Ubuntu once; cloud: is Tailscale on?)` } });
+  win.loadFile("setup.html", { query: { error: `Cannot reach ${url}. Is DexClorageBot running? (local: open Ubuntu once; cloud: is Tailscale on?)` } });
 }
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 1400, height: 900, title: "Orbit", backgroundColor: "#0b0d12",
+    width: 1400, height: 900, title: "DexClorageBot", backgroundColor: "#0b0d12",
     webPreferences: { contextIsolation: true, nodeIntegration: false },
   });
   // Links that leave the app open in your normal browser.
@@ -43,7 +43,7 @@ function createWindow() {
 // setup.html navigates to orbit-setup://save?url=... to store the server URL.
 app.whenReady().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate([
-    { label: "Orbit", submenu: [
+    { label: "DexClorageBot", submenu: [
       { label: "Change server…", click: () => win.loadFile("setup.html") },
       { role: "reload" }, { role: "toggleDevTools" }, { type: "separator" }, { role: "quit" },
     ] },

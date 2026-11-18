@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Orbit setup. Run ONCE as root on Ubuntu 24.04 (x86).
+# DexClorageBot setup. Run ONCE as root on Ubuntu 24.04 (x86).
 #   Free, on your own Windows PC (WSL2):   sudo bash vm/bootstrap.sh --local
 #   On a cloud server:                    bash vm/bootstrap.sh
 # --local skips Tailscale and the firewall; the app is then at http://localhost:8787
 # It installs: a desktop you can view in the browser (Xvfb + XFCE + x11vnc + noVNC),
 # Google Chrome, Node 22, the official Claude Code CLI and Codex CLI, Playwright MCP,
-# uv, Tailscale (private network), and the Orbit server as system services.
+# uv, Tailscale (private network), and the DexClorageBot server as system services.
 set -euo pipefail
 
 if [[ $EUID -ne 0 ]]; then echo "Run as root."; exit 1; fi
@@ -91,7 +91,7 @@ fi
 echo "==> 8/8 Services"
 cat > /etc/systemd/system/orbit-xvfb.service <<EOF
 [Unit]
-Description=Orbit virtual screen
+Description=DexClorageBot virtual screen
 [Service]
 User=$U
 ExecStart=/usr/bin/Xvfb :1 -screen 0 1440x900x24 -nolisten tcp
@@ -102,7 +102,7 @@ EOF
 
 cat > /etc/systemd/system/orbit-desktop.service <<EOF
 [Unit]
-Description=Orbit desktop (XFCE)
+Description=DexClorageBot desktop (XFCE)
 After=orbit-xvfb.service
 Requires=orbit-xvfb.service
 [Service]
@@ -118,7 +118,7 @@ EOF
 
 cat > /etc/systemd/system/orbit-vnc.service <<EOF
 [Unit]
-Description=Orbit VNC server (localhost only)
+Description=DexClorageBot VNC server (localhost only)
 After=orbit-xvfb.service
 Requires=orbit-xvfb.service
 [Service]
@@ -132,7 +132,7 @@ EOF
 
 cat > /etc/systemd/system/orbit-novnc.service <<EOF
 [Unit]
-Description=Orbit browser view of the desktop (noVNC)
+Description=DexClorageBot browser view of the desktop (noVNC)
 After=orbit-vnc.service
 [Service]
 User=$U
@@ -144,7 +144,7 @@ EOF
 
 cat > /etc/systemd/system/orbit-server.service <<EOF
 [Unit]
-Description=Orbit agent server
+Description=DexClorageBot agent server
 After=network-online.target orbit-desktop.service
 [Service]
 User=$U
@@ -166,7 +166,7 @@ TOKEN="$(sudo -u $U python3 -c "import json;print(json.load(open('$H/.orbit/conf
 cat <<EOF
 
 ============================================================
- Orbit is installed.
+ DexClorageBot is installed.
 
  App URL:                    http://$TSIP:8787
  Token (paste into the app): $TOKEN

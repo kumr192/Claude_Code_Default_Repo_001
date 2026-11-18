@@ -1,4 +1,4 @@
-"""Settings for Orbit. Stored in ~/.orbit/config.json on the VM.
+"""Settings for DexClorageBot. Stored in ~/.orbit/config.json on the VM.
 
 No API keys live here. Claude and Codex use the logins you make
 yourself with `claude auth login` and `codex login --device-auth`.

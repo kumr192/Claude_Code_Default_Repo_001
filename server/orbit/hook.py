@@ -1,4 +1,4 @@
-"""Claude Code PreToolUse hook: asks the Orbit server before each tool call.
+"""Claude Code PreToolUse hook: asks the DexClorageBot server before each tool call.
 
 Safe steps are allowed at once. Risky steps wait until you approve or deny
 them in the app. Uses only the Python standard library.
@@ -41,19 +41,19 @@ def main() -> None:
             "input": event.get("tool_input", {}),
         })
         if res["decision"] == "allow":
-            decide("allow", "Orbit: safe step")
+            decide("allow", "DexClorageBot: safe step")
         approval_id = res["approval_id"]
         deadline = time.time() + res.get("timeout", 900)
         while time.time() < deadline:
             status = call(f"/api/approvals/{approval_id}")["status"]
             if status == "approved":
-                decide("allow", "Approved by the user in Orbit")
+                decide("allow", "Approved by the user in DexClorageBot")
             if status == "denied":
-                decide("deny", "The user denied this step in Orbit. Do not retry it; ask what to do instead.")
+                decide("deny", "The user denied this step in DexClorageBot. Do not retry it; ask what to do instead.")
             time.sleep(2)
         decide("deny", "No approval in time. Ask the user before trying again.")
     except Exception as e:  # if the server is down, fail safe
-        decide("deny", f"Orbit approval check failed: {e}")
+        decide("deny", f"DexClorageBot approval check failed: {e}")
 
 
 if __name__ == "__main__":

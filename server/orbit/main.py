@@ -1,4 +1,4 @@
-"""Orbit API server. Run on the VM:  uv run orbit-server"""
+"""DexClorageBot API server. Run on the VM:  uv run orbit-server"""
 
 import asyncio
 import os
@@ -70,7 +70,7 @@ async def lifespan(app: FastAPI):
     task.cancel()
 
 
-app = FastAPI(title="Orbit", lifespan=lifespan)
+app = FastAPI(title="DexClorageBot", lifespan=lifespan)
 
 
 # ---------- UI ----------
@@ -276,5 +276,5 @@ async def run_routine_now(rid: int):
 def cli() -> None:
     import uvicorn
     host = os.environ.get("ORBIT_HOST", "0.0.0.0")
-    print(f"Orbit on http://{host}:{PORT}  token: {CFG['token']}")
+    print(f"DexClorageBot on http://{host}:{PORT}  token: {CFG['token']}")
     uvicorn.run(app, host=host, port=PORT)
