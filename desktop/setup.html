@@ -9,8 +9,8 @@
 </style></head>
 <body><form class="card" id="f">
   <h2 style="margin:0">◉ Orbit</h2>
-  <p class="hint">Enter the App URL printed at the end of the VM setup. Tailscale must be running on this computer.</p>
-  <input id="url" placeholder="http://100.x.y.z:8787" required>
+  <p class="hint">Enter the App URL printed at the end of setup. On this PC (WSL): <b>http://localhost:8787</b></p>
+  <input id="url" placeholder="http://localhost:8787" value="http://localhost:8787" required>
   <button>Connect</button>
   <p class="err" id="err"></p>
 </form>

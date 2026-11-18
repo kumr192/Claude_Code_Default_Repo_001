@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# Orbit VM setup. Run ONCE as root on a fresh Ubuntu 24.04 (x86) server:
-#     bash /root/orbit/vm/bootstrap.sh
+# Orbit setup. Run ONCE as root on Ubuntu 24.04 (x86).
+#   Free, on your own Windows PC (WSL2):   sudo bash vm/bootstrap.sh --local
+#   On a cloud server:                    bash vm/bootstrap.sh
+# --local skips Tailscale and the firewall; the app is then at http://localhost:8787
 # It installs: a desktop you can view in the browser (Xvfb + XFCE + x11vnc + noVNC),
 # Google Chrome, Node 22, the official Claude Code CLI and Codex CLI, Playwright MCP,
 # uv, Tailscale (private network), and the Orbit server as system services.
@@ -12,6 +14,17 @@ APP=/opt/orbit
 U=orbit
 H=/home/$U
 export DEBIAN_FRONTEND=noninteractive
+MODE=cloud
+[[ "${1:-}" == "--local" ]] && MODE=local
+
+if [[ $MODE == local ]] && ! [[ -d /run/systemd/system ]]; then
+  # WSL needs systemd for the background services.
+  printf '[boot]\nsystemd=true\n' > /etc/wsl.conf
+  echo "systemd was off. It is now on."
+  echo "In Windows PowerShell run:  wsl --shutdown"
+  echo "Then open Ubuntu again and run this script again."
+  exit 1
+fi
 
 echo "==> 1/8 System packages"
 apt-get update -y
@@ -42,14 +55,19 @@ rsync -a --delete --exclude .git "$SRC/" "$APP/"
 chown -R $U:$U "$APP"
 sudo -u $U bash -c "cd $APP/server && $H/.local/bin/uv sync"
 
-echo "==> 6/8 Tailscale (private network between your devices and this VM)"
-command -v tailscale >/dev/null || curl -fsSL https://tailscale.com/install.sh | sh
-if ! tailscale ip -4 >/dev/null 2>&1; then
-  echo
-  echo ">>> Open the link below in your browser and sign in to Tailscale:"
-  tailscale up
+if [[ $MODE == cloud ]]; then
+  echo "==> 6/8 Tailscale (private network between your devices and this VM)"
+  command -v tailscale >/dev/null || curl -fsSL https://tailscale.com/install.sh | sh
+  if ! tailscale ip -4 >/dev/null 2>&1; then
+    echo
+    echo ">>> Open the link below in your browser and sign in to Tailscale:"
+    tailscale up
+  fi
+  TSIP="$(tailscale ip -4 | head -1)"
+else
+  echo "==> 6/8 Local mode (WSL): no Tailscale needed"
+  TSIP=localhost   # WSL2 forwards localhost ports to Windows
 fi
-TSIP="$(tailscale ip -4 | head -1)"
 
 echo "==> 7/8 Config, VNC password, firewall"
 VNCPASS="$(openssl rand -hex 4)"   # x11vnc uses max 8 characters
@@ -63,10 +81,12 @@ cfg.setdefault("token", secrets.token_hex(24))
 cfg["computer_url"] = "http://$TSIP:6080/vnc.html?autoconnect=1&resize=scale&password=$VNCPASS"
 p.write_text(json.dumps(cfg, indent=2)); p.chmod(0o600)
 EOF
-# Only SSH is open to the internet. The app and desktop are reachable via Tailscale only.
-ufw allow OpenSSH
-ufw allow in on tailscale0
-ufw --force enable
+if [[ $MODE == cloud ]]; then
+  # Only SSH is open to the internet. The app and desktop are reachable via Tailscale only.
+  ufw allow OpenSSH
+  ufw allow in on tailscale0
+  ufw --force enable
+fi
 
 echo "==> 8/8 Services"
 cat > /etc/systemd/system/orbit-xvfb.service <<EOF
@@ -148,7 +168,7 @@ cat <<EOF
 ============================================================
  Orbit is installed.
 
- App URL (Tailscale only):  http://$TSIP:8787
+ App URL:                    http://$TSIP:8787
  Token (paste into the app): $TOKEN
  Desktop view:               http://$TSIP:6080/vnc.html  (password: $VNCPASS)
 
